@@ -1,9 +1,51 @@
 import customtkinter
 from functools import partial
 
-
+##Global variables
+currentItem = []
 
 ## -----All functions start here--------
+
+
+def packAllCurrentItem():
+    for item in currentItem:
+        item.pack(pady = 5)
+
+def unpackAllCurrentItem():
+    for item in currentItem:
+        item.forget()
+
+
+def moveItemUp(item):
+    index = currentItem.index(item)
+
+    unpackAllCurrentItem()
+    ## Index must larger than 0 to move up
+    if(index > 0):
+        indexPrev = index -1
+        currentItem[index], currentItem[indexPrev] = currentItem[indexPrev], currentItem[index]
+    packAllCurrentItem()
+
+
+
+def moveItemDown(item):
+    index = currentItem.index(item)
+    unpackAllCurrentItem()
+
+    if(index < len(currentItem) -1):
+        indexNext = index + 1
+        currentItem[index], currentItem[indexNext] = currentItem[indexNext], currentItem[index]
+
+    packAllCurrentItem()
+
+
+def removeItem(item):
+    currentItem.remove(item)
+    item.forget()
+
+
+
+
 
 ## function name setupPomodoroScreen -> customtkinter.CTkFrame
 ## Created by Minh Quang Le, 12/07/2022
@@ -13,9 +55,9 @@ def createItem(taskName):
     itemFrame = customtkinter.CTkFrame(scrollable_frame_todo,width=200)
 
     item_nameLabel = customtkinter.CTkLabel(master = itemFrame, text = taskName,font = ("Montserrat",10))
-    upButton = customtkinter.CTkButton(master=itemFrame, text = 'Moves Up', width=5, height = 5)
-    downButton = customtkinter.CTkButton(master=itemFrame, text = 'Moves Down', width=5)
-    finishedButton = customtkinter.CTkButton(master=itemFrame, text = 'Finished', width=5, command = lambda:itemFrame.forget())
+    upButton = customtkinter.CTkButton(master=itemFrame, text = 'Moves Up', width=5, command = lambda:moveItemUp(itemFrame))
+    downButton = customtkinter.CTkButton(master=itemFrame, text = 'Moves Down', width=5, command = lambda:moveItemDown(itemFrame))
+    finishedButton = customtkinter.CTkButton(master=itemFrame, text = 'Finished', width=5, command = lambda:removeItem(itemFrame))
     item_nameLabel.pack(side = 'left', expand = True)
     upButton.pack(padx=5, side = 'right', expand = True)
     downButton.pack(padx=5, side = 'right', expand = True)
@@ -25,7 +67,8 @@ def createItem(taskName):
 def addItem(itemName):
     global scrollable_frame_todo
     itemFrame = createItem(itemName)
-    itemFrame.pack()
+    currentItem.append(itemFrame)
+    itemFrame.pack(pady = 5 )
 
 
 ## function name setupPomodoroScreen -> Void
